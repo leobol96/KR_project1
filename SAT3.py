@@ -48,7 +48,8 @@ def chekUnitliters(sudokurules,domain,sudokunumbers):
         if len(rule) == 1 :
             # positive
             if rule[0][0] != '-':
-                sudokunumbers.append(rule[0])
+                if rule[0] not in sudokunumbers:
+                    sudokunumbers.append(rule[0])
                 if rule[0] in domain:
                     literal_to_check.append(rule[0])
                     domain.remove(rule[0])
@@ -61,17 +62,21 @@ def chekUnitliters(sudokurules,domain,sudokunumbers):
                 domain.remove(rule[0][1:])
 
             sudokurules.remove(rule)
-            
+
 def checkPureLiters():
     return
 
 def dpll_2(sudokurules,literal,domain,sudokunumbers):
-    
+
     removeClauses(literal,sudokurules)
     shortenClauses(literal,sudokurules)
 
-    if [] in sudokurules: return True
-    if not sudokurules : return False
+    if not sudokurules: 
+        print(sudokunumbers)
+        return True
+    for rule in sudokurules:
+        if not rule:
+            return False
 
     chekUnitliters(sudokurules,domain,sudokunumbers)
     checkPureLiters()
@@ -85,10 +90,10 @@ def dpll_2(sudokurules,literal,domain,sudokunumbers):
         back_domain = copy.deepcopy(domain)
         back_sudoNumbers = copy.deepcopy(sudokunumbers)
 
-        if not back_domain:
-            sudokunumbers = back_sudoNumbers
-            return True
-        literal_to_use = random.choice(back_domain)
+        back_domain.sort()
+        literal_to_use = back_domain[0]
+        back_domain.pop(0)
+        #literal_to_use = random.choice(back_domain)
         dpll_2(back_list,literal_to_use,back_domain,back_sudoNumbers)
 
 
