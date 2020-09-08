@@ -19,7 +19,7 @@ def readRules():
 def createDomain(domain):
     for rule in sudokurules:
         for literal in rule:
-            if (literal not in sudokunumbers and literal not in domain):
+            if (literal not in domain):
                 domain.append(literal)
 
 def removeNumberInSudoku():
@@ -38,7 +38,6 @@ def removeClauses(literal):
 
     sudokurules = [x for x in sudokurules if x not in rule_to_remove]
     
-
 def shortenClauses(literal):
     for rule in sudokurules:
         for number in rule:
@@ -49,19 +48,30 @@ def shortenClauses(literal):
                 if ('-' + literal == number):
                     rule.remove(number)  
 
-def chekUnitliter():
+def chekUnitliters():
     for rule in sudokurules:
-        if len(rule) == 1 and rule[0][0] != '-':
-            sudokunumbers.append(rule[0])
-            domain.remove(rule[0])
-            domain.remove('-' + rule[0])
-            removeClauses(rule[0])
-            shortenClauses(rule[0])
+        if len(rule) == 1 :
+            # positive
+            if rule[0][0] != '-':
+                sudokunumbers.append(rule[0])
+                if rule[0] in domain:
+                    domain.remove(rule[0])
+                    domain.remove('-' + rule[0])
+            # negative
+            elif rule[0] in domain:
+                domain.remove(rule[0])
+                domain.remove(rule[0][1:])
+
+            literal_to_check.append(rule[0])
+
+def checkPureLiters():
+    return
 
 def dpll_2(sudokurules,literal):
     
     back_list = copy.deepcopy(sudokurules)
     back_domain = copy.deepcopy(domain)
+    back_sudoNumbers = copy.deepcopy(sudokunumbers)
     
     removeClauses(literal)
     shortenClauses(literal)
@@ -69,9 +79,13 @@ def dpll_2(sudokurules,literal):
     if [] in sudokurules: return True
     if not sudokurules : return False
 
-    chekUnitliter()
+    chekUnitliters()
+    checkPureLiters()
 
-
+    if literal_to_check:
+        # run dppl on literal 
+        literal_to_use = literal_to_check.pop(0)
+        dpll_2(sudokurules,literal_to_use)
 
 if __name__=="__main__":
     sudokunumbers = []
@@ -80,8 +94,13 @@ if __name__=="__main__":
     readSudoku()
     readRules()
     createDomain(domain)
-    #removeNumberInSudoku()
-    #removeClauses('-111')
-    shortenClauses('-111')
+
+    literal_to_check = copy.deepcopy(sudokunumbers)
+
+    if literal_to_check:
+        # run dppl on literal 
+        literal_to_use = literal_to_check[0]
+        literal_to_check.pop()
+        dpll_2(sudokurules,literal_to_use)
 
 
