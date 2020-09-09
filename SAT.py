@@ -3,7 +3,7 @@ import random
 
 # Read the sudoku 
 def readSudoku():
-    Sudoku = open("sudoku-example_9_9_easy.txt", "r")
+    Sudoku = open("sudoku-example.txt", "r")
     for number in Sudoku:
         end_number = number.split()
         sudokunumbers.append(end_number[0])
@@ -51,6 +51,21 @@ def shortenClauses(literal,sudokurules):
             if (number == negate(literal)):
                 rule.remove(number) 
 
+def check_delete_UnitLiterals(sudokurules,domain,sudokunumbers):
+    
+    for rule in sudokurules[:]:
+        if len(rule) == 1:
+            if rule in domain:domain.remove(rule[0])
+            if negate(rule[0]) in domain:domain.remove(negate(rule[0]))
+            if rule[0][0] != '-':
+                sudokunumbers.append(rule[0])
+            removeClauses(rule[0],sudokurules)
+            shortenClauses(rule[0],sudokurules)
+    
+    for rule in sudokurules:
+        if len(rule) == 1:
+            check_delete_UnitLiterals(sudokurules,domain,sudokunumbers)
+
 # Implementation of the DP algorithm
 def dpll_2(sudokurules,literal,domain,sudokunumbers):
 
@@ -64,9 +79,11 @@ def dpll_2(sudokurules,literal,domain,sudokunumbers):
     if [] in sudokurules: 
         return False
 
+    check_delete_UnitLiterals(sudokurules,domain,sudokunumbers)
+
     # Remove from the domain P and -P
     literal_to_use = domain.pop(0)
-    domain.remove(negate(literal_to_use))
+    if negate(literal_to_use) in domain : domain.remove(negate(literal_to_use))
     
     # The deep copies have to be executed after the pop from the domain
     back_list = copy.deepcopy(sudokurules)
@@ -80,7 +97,6 @@ def dpll_2(sudokurules,literal,domain,sudokunumbers):
         # CHeck for P
         back_number.append(negate(literal_to_use)) 
         dpll_2(back_list,negate(literal_to_use),back_domain,back_number)
-
 
 if __name__=="__main__":
     
@@ -100,14 +116,20 @@ if __name__=="__main__":
         removeClauses(literal,sudokurules)
         shortenClauses(literal,sudokurules)
 
-    back_list = copy.deepcopy(sudokurules)
-    back_sudoNumbers = copy.deepcopy(sudokunumbers)
+    # First check for unitLiterals 
+    check_delete_UnitLiterals(sudokurules,domain,sudokunumbers)
 
-    domain.sort()
-    literal_to_use = domain.pop(0)
-    domain.remove(literal_to_use[1:])
+    if not sudokurules:
+        print(sudokunumbers)
+    else:
+        back_list = copy.deepcopy(sudokurules)
+        back_sudoNumbers = copy.deepcopy(sudokunumbers)
 
-    if not dpll_2(sudokurules,literal_to_use,domain,sudokunumbers):
-        dpll_2(back_list,literal_to_use[1:],domain,back_sudoNumbers)
+        domain.sort()
+        literal_to_use = domain.pop(0)
+        if negate(literal_to_use) in domain :domain.remove(negate(literal_to_use))
+
+        if not dpll_2(sudokurules,literal_to_use,domain,sudokunumbers):
+            dpll_2(back_list,negate(literal_to_use),domain,back_sudoNumbers)
 
 
