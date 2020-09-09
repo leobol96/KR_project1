@@ -73,7 +73,6 @@ def dpll_2(sudokurules,literal,domain,sudokunumbers):
     back_domain = copy.deepcopy(domain)
     back_number = copy.deepcopy(sudokunumbers)
 
-    # Check for -P
     if dpll_2(sudokurules,literal_to_use,domain,sudokunumbers):
         # Check for -P
         return True
