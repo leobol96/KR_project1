@@ -58,7 +58,7 @@ def check_delete_UnitLiterals(sudokurules,domain,sudokunumbers):
             if rule in domain:domain.remove(rule[0])
             if negate(rule[0]) in domain:domain.remove(negate(rule[0]))
             if rule[0][0] != '-':
-                sudokunumbers.append(rule[0])
+                if rule[0] not in sudokunumbers : sudokunumbers.append(rule[0])
             removeClauses(rule[0],sudokurules)
             shortenClauses(rule[0],sudokurules)
     
