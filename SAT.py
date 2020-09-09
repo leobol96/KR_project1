@@ -1,92 +1,117 @@
-# SAT solvers - Project 1 Knowledge Representation
-import numpy as np
+import copy
+import random
 
-# The function is used to encode the given rules 
+# Read the sudoku 
+def readSudoku():
+    Sudoku = open("sudoku-example_9_9_easy.txt", "r")
+    for number in Sudoku:
+        end_number = number.split()
+        sudokunumbers.append(end_number[0])
+
+# Read the rules in DIMACS format
 def readRules():
     rules = open("sudoku-rules.txt", "r")
-    return rules.read()
+    for row in rules:
+        if row[0] == "p":
+            pass
+        else:
+            splitrow = row.split()
+            splitrow.pop()
+            sudokurules.append(splitrow)
 
-# The function is used to encode the given sudoku in a numpy matrix
-# The value returned is the sudoku puzle to be solved
-def encodePuzle(dimension):
-    # Creating an array N * N dimension with only zeros
-    sudoku = np.zeros((dimension, dimension)) 
-    with open("sudoku-example.txt","r") as puzle_file:
-        for line in puzle_file:
-            # Filling the matrix with the numbers token from the file 
-            sudoku[int(line[0])-1,int(line[1])-1] = int(line[2])
-        return sudoku
+# Negate the literal passed as a parameter
+def negate(literal_to_negate):
+    if (literal_to_negate[0] == '-'):
+        return literal_to_negate[1:]
+    else: 
+        return '-' + literal_to_negate
+        
+# Create a domain
+def createDomain(domain):
+    for rule in sudokurules:
+        for literal in rule:
+            if (literal[0] == '-' and literal not in domain and literal[1:] not in sudokunumbers) or (literal[0] != '-' and literal not in domain and literal not in sudokunumbers):
+                domain.append(literal)
 
-# Check if the value is in the row
-def check_row(arr, row, num, dimension): 
-    for i in range(dimension): 
-        if(arr[row][i] == num): 
-            return True
-    return False
-  
-# Check if the value is in the col
-def check_col(arr, col, num, dimension): 
-    for i in range(dimension): 
-        if(arr[i][col] == num): 
-            return True
-    return False
-  
-# Check if the value is in the box 
-def check_box(arr, row, col, num): 
-    for i in range(3): 
-        for j in range(3): 
-            if(arr[i + row][j + col] == num): 
-                return True
-    return False
+# Remove clauses from the sudokurules using the literal passed as a parameter
+def removeClauses(literal,sudokurules):
+    
+    #The symbol [:] it 's used to work with a copy of the original element. Deleting objects where you are working could cause problems
+    for rule in sudokurules[:]:
+        for number in rule[:]:
+            if (literal == number):
+                sudokurules.remove(rule)
 
-# Row + col + box
-def check_all(arr, row, col, num, dimension): 
-    return not check_row(arr, row, num, dimension) and not check_col(arr, col, num, dimension) and not check_box(arr, row - row % 3, col - col % 3, num) 
-  
-            
-# This function used the Davis Putman algorithm to solve the sat problem
-def DP_algorithm():
-    print('to_do')
+# Shorten clauses from the sudokurules using the literal passed as a parameter
+def shortenClauses(literal,sudokurules):
+    
+    #The symbol [:] it 's used to work with a copy of the original element. Deleting objects where you are working could cause problems
+    for rule in sudokurules[:]:
+        for number in rule[:]:
+            if (number == negate(literal)):
+                rule.remove(number) 
 
-# This function used the recursion to solve the sat problem 
-def heuristic_algorithm_recursive(sudoku,dimension,col,row):
+# Implementation of the DP algorithm
+def dpll_2(sudokurules,literal,domain,sudokunumbers):
 
-    # Last element of the sudoku 
-    if (col == dimension - 1 and row == dimension):
+    removeClauses(literal,sudokurules)
+    shortenClauses(literal,sudokurules)
+
+    if not sudokurules: 
+        sudokunumbers.sort()
+        print(sudokunumbers)
         return True
-          
-    # Last element of the row
-    if (row == dimension):
-        col += 1 
-        row = 0
+    if [] in sudokurules: 
+        return False
 
-    # Element already assigned
-    if (sudoku[col][row] != 0):
-        return heuristic_algorithm_recursive(sudoku,dimension,col,row+1)
+    # Remove from the domain P and -P
+    literal_to_use = domain.pop(0)
+    domain.remove(negate(literal_to_use))
     
-    # Recursion
-    for k in range(1, dimension + 1):
-        # Check if the sudoku is valid with the new value
-        if (check_all(sudoku,col,row,k,dimension)):
-            sudoku[col][row] = k
-            if (heuristic_algorithm_recursive(sudoku,dimension,col,row + 1)):
-                return True
-        sudoku[col][row] = 0
-    return False
+    # The deep copies have to be executed after the pop from the domain
+    back_list = copy.deepcopy(sudokurules)
+    back_domain = copy.deepcopy(domain)
+    back_number = copy.deepcopy(sudokunumbers)
 
-# This will be the second heuristic method to solve the SAT problem
-def heuristic_algorithm_two():
-    print('to_do')
-
-# Main function  
-if __name__=="__main__": 
-    
-    dimension = 9
-    sudoku = encodePuzle(dimension)
-    print("Sudoku to solve")
-    print(sudoku)
-    if (heuristic_algorithm_recursive(sudoku,dimension,0,0)):
-        print("This is the solution:")
-        print(sudoku)
+    # Check for -P
+    if dpll_2(sudokurules,literal_to_use,domain,sudokunumbers):
+        # Check for -P
+        return True
     else:
-        print("There aren't solutions")
+        # CHeck for P
+        back_number.append(negate(literal_to_use)) 
+        dpll_2(back_list,negate(literal_to_use),back_domain,back_number)
+
+
+if __name__=="__main__":
+    
+    # Numbers used to solve the sudoku
+    sudokunumbers = []
+    # Rules used to solve the sudoku in Dimacs format 
+    sudokurules = []
+    # Domain where pop the numbers 
+    domain = []
+    
+    readSudoku()
+    readRules()
+    createDomain(domain)
+
+    # For all the number already in the sudoku 
+    for literal in sudokunumbers:
+        removeClauses(literal,sudokurules)
+        shortenClauses(literal,sudokurules)
+
+    back_list = copy.deepcopy(sudokurules)
+    back_sudoNumbers = copy.deepcopy(sudokunumbers)
+
+    domain.sort()
+    literal_to_use = domain.pop(0)
+    domain.remove(literal_to_use[1:])
+
+    if dpll_2(sudokurules,literal_to_use,domain,sudokunumbers):
+        print('risolto')
+    else:
+        if dpll_2(back_list,literal_to_use[1:],domain,back_sudoNumbers):
+            print('risolto')
+
+
