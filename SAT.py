@@ -107,10 +107,7 @@ if __name__=="__main__":
     literal_to_use = domain.pop(0)
     domain.remove(literal_to_use[1:])
 
-    if dpll_2(sudokurules,literal_to_use,domain,sudokunumbers):
-        print('risolto')
-    else:
-        if dpll_2(back_list,literal_to_use[1:],domain,back_sudoNumbers):
-            print('risolto')
+    if not dpll_2(sudokurules,literal_to_use,domain,sudokunumbers):
+        dpll_2(back_list,literal_to_use[1:],domain,back_sudoNumbers)
 
 
