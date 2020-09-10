@@ -1,5 +1,6 @@
 import copy
 import random
+import time
 
 # Read the sudoku 
 def readSudoku():
@@ -100,6 +101,8 @@ def dpll_2(sudokurules,literal,domain,sudokunumbers):
 
 if __name__=="__main__":
     
+    start_time = time.time()
+    print("1.0: Start")
     # Numbers used to solve the sudoku
     sudokunumbers = []
     # Rules used to solve the sudoku in Dimacs format 
@@ -107,10 +110,15 @@ if __name__=="__main__":
     # Domain where pop the numbers 
     domain = []
     
+    print("2.0: Reading the sudoku")
     readSudoku()
+    print("3.0: Reading the rules")
     readRules()
+    print("4.0: Creating the domain")
     createDomain(domain)
 
+    print("5.0: Starting solving")
+    print("5.1 Iterating on given numbers")
     # For all the number already in the sudoku 
     for literal in sudokunumbers:
         removeClauses(literal,sudokurules)
@@ -122,6 +130,7 @@ if __name__=="__main__":
     if not sudokurules:
         print(sudokunumbers)
     else:
+        print("5.2 Starting the dpll core")
         back_list = copy.deepcopy(sudokurules)
         back_sudoNumbers = copy.deepcopy(sudokunumbers)
 
@@ -132,4 +141,6 @@ if __name__=="__main__":
         if not dpll_2(sudokurules,literal_to_use,domain,sudokunumbers):
             dpll_2(back_list,negate(literal_to_use),domain,back_sudoNumbers)
 
+    print("6 Finish")
+    print("Total time in Seconds :" + format(time.time() - start_time,'.2f'))
 
