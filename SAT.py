@@ -73,15 +73,13 @@ def shorten_clauses(literal, sudokurules):
 
 
 # Give the literal using the version passed as a parameter
-def give_literal( sudokurules):
+def give_literal(sudokurules):
     if version == '-S2':
-        literal_to_use = dlis_heuristic(sudokurules)
+        return dlis_heuristic(sudokurules)
     elif version == '-S3':
-        literal_to_use = cul_heuristic(sudokurules)
+        return cul_heuristic(sudokurules)
     else:
-        literal_to_use = sudokurules[0][0]
-
-    return literal_to_use
+        return sudokurules[0][0]
 
 
 # Create unit literals heuristic algorithm
@@ -136,10 +134,13 @@ def dpll_2(sudokurules, literal, sudokunumbers):
 
     remove_clauses(literal, sudokurules)
     shorten_clauses(literal, sudokurules)
-    # The ceck unit literal has to be here, because could creates the
     check_delete_unit_literals(sudokurules, sudokunumbers)
 
     if not sudokurules:
+
+        if literal[0] != '-' and literal not in sudokunumbers:
+            sudokunumbers.append(literal)
+
         global result
         sudokunumbers.sort()
         result = sudokunumbers[:]
@@ -158,8 +159,8 @@ def dpll_2(sudokurules, literal, sudokunumbers):
     if dpll_2(sudokurules, literal_to_use, sudokunumbers):
         return True
     else:
-        if literal_to_use[0] != '-' and literal_to_use not in sudokunumbers:
-            sudokunumbers.append(literal_to_use)
+        if (negate(literal_to_use))[0] != '-' and negate(literal_to_use) not in sudokunumbers:
+            back_sudoku_number.append(negate(literal_to_use))
         dpll_2(back_sudoku_rules, negate(literal_to_use), back_sudoku_number)
 
 
@@ -206,8 +207,8 @@ if __name__ == "__main__":
                 sudokunumbers.append(literal_to_use)
 
             if not dpll_2(sudokurules, literal_to_use, sudokunumbers):
-                if literal_to_use[0] != '-' and literal_to_use not in sudokunumbers:
-                    sudokunumbers.append(literal_to_use)
+                if (negate(literal_to_use))[0] != '-' and negate(literal_to_use) not in sudokunumbers:
+                    back_sudoNumbers.append(negate(literal_to_use))
                 dpll_2(back_list, negate(literal_to_use), back_sudoNumbers)
 
         print("6.0: Finish")
