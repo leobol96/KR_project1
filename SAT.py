@@ -4,16 +4,16 @@ import time
 
 
 # Read the sudoku
-def read_sudoku(sudokuname):
-    Sudoku = open(sudokuname, "r")
-    for number in Sudoku:
+def read_sudoku(sudoku_filename):
+    sudoku = open(sudoku_filename, "r")
+    for number in sudoku:
         end_number = number.split()
         sudokunumbers.append(end_number[0])
 
 
 # Read the rules in DIMACS format
-def read_rules(rulename):
-    rules = open(rulename, "r")
+def read_rules(rules_filename):
+    rules = open(rules_filename, "r")
     for row in rules:
         if row[0] == "p":
             pass
@@ -31,18 +31,9 @@ def negate(literal_to_negate):
         return '-' + literal_to_negate
 
 
-# Create a domain
-def create_domain(domain):
-    for rule in sudokurules:
-        for literal in rule:
-            if (literal[0] == '-' and literal not in domain and negate(literal) not in sudokunumbers) or (
-                    literal[0] != '-' and literal not in domain and literal not in sudokunumbers):
-                domain.append(literal)
-
-
 # Write the file in 'Name of the file in input' + '.out' + 'txt'
-def writefile(sudokuname, result):
-    output = open(sudokuname.replace('.txt', '') + '.out.txt', 'w')
+def writefile(sudoku_out_name, result):
+    output = open(sudoku_out_name.replace('.txt', '') + '.out.txt', 'w')
     if result:
         for idx, number in enumerate(result):
             output.write(number + ' 0\n')
@@ -82,17 +73,14 @@ def shorten_clauses(literal, sudokurules):
 
 
 # Give the literal using the version passed as a parameter
-def give_literal(domain, sudokurules):
+def give_literal( sudokurules):
     if version == '-S2':
         literal_to_use = dlis_heuristic(sudokurules)
     elif version == '-S3':
         literal_to_use = cul_heuristic(sudokurules)
     else:
-        literal_to_use = domain[0]
+        literal_to_use = sudokurules[0][0]
 
-    # Removing P and -P from the domain
-    if literal_to_use in domain: domain.remove(literal_to_use)
-    if negate(literal_to_use) in domain: domain.remove(negate(literal_to_use))
     return literal_to_use
 
 
@@ -122,14 +110,12 @@ def dlis_heuristic(sudokurules):
     return to_return
 
 
-def check_delete_unit_literals(sudokurules, domain, sudokunumbers):
+def check_delete_unit_literals(sudokurules, sudokunumbers):
     number_unit_literals = 0
     literal_list = []
     for rule in sudokurules[:]:
         if len(rule) == 1:
             number_unit_literals += 1
-            if rule in domain: domain.remove(rule[0])
-            if negate(rule[0]) in domain: domain.remove(negate(rule[0]))
             if rule[0][0] != '-':
                 if rule[0] not in sudokunumbers: sudokunumbers.append(rule[0])
             if rule[0] not in literal_list: literal_list.append(rule[0])
@@ -139,15 +125,15 @@ def check_delete_unit_literals(sudokurules, domain, sudokunumbers):
         shorten_clauses(literal_list, sudokurules)
 
     if number_unit_literals > 1:
-        check_delete_unit_literals(sudokurules, domain, sudokunumbers)
+        check_delete_unit_literals(sudokurules, sudokunumbers)
 
 
 # Implementation of the DP algorithm
-def dpll_2(sudokurules, literal, domain, sudokunumbers):
+def dpll_2(sudokurules, literal, sudokunumbers):
     remove_clauses(literal, sudokurules)
     shorten_clauses(literal, sudokurules)
     # The ceck unit literal has to be here, because could creates the
-    check_delete_unit_literals(sudokurules, domain, sudokunumbers)
+    check_delete_unit_literals(sudokurules, sudokunumbers)
 
     if not sudokurules:
         global result
@@ -157,21 +143,20 @@ def dpll_2(sudokurules, literal, domain, sudokunumbers):
     if [] in sudokurules:
         return False
 
-    literal_to_use = give_literal(domain, sudokurules)
+    literal_to_use = give_literal(sudokurules)
 
     back_sudoku_rules = copy.copy(sudokurules)
-    back_domain = copy.copy(domain)
     back_sudoku_number = copy.copy(sudokunumbers)
 
     if literal_to_use[0] != '-' and literal_to_use not in sudokunumbers:
         sudokunumbers.append(literal_to_use)
 
-    if dpll_2(sudokurules, literal_to_use, domain, sudokunumbers):
+    if dpll_2(sudokurules, literal_to_use, sudokunumbers):
         return True
     else:
         if literal_to_use[0] != '-' and literal_to_use not in sudokunumbers:
             sudokunumbers.append(literal_to_use)
-        dpll_2(back_sudoku_rules, negate(literal_to_use), back_domain, back_sudoku_number)
+        dpll_2(back_sudoku_rules, negate(literal_to_use), back_sudoku_number)
 
 
 if __name__ == "__main__":
@@ -185,8 +170,6 @@ if __name__ == "__main__":
         sudokunumbers = []
         # Rules used to solve the sudoku in Dimacs format
         sudokurules = []
-        # Domain where pop the numbers
-        domain = []
         # Result
         result = []
         # Version of the algorithm
@@ -198,14 +181,12 @@ if __name__ == "__main__":
         print("3.0: Reading the rules")
         rulename = sys.argv[3]
         read_rules(rulename)
-        print("4.0: Creating the domain")
-        create_domain(domain)
 
         print("5.0: Starting solving")
         print("5.1: Iterating on given numbers")
         remove_clauses(sudokunumbers, sudokurules)
         shorten_clauses(sudokunumbers, sudokurules)
-        check_delete_unit_literals(sudokurules, domain, sudokunumbers)
+        check_delete_unit_literals(sudokurules, sudokunumbers)
 
         if not sudokurules:
             result = sudokunumbers[:]
@@ -213,17 +194,17 @@ if __name__ == "__main__":
         else:
             print("5.2: Starting the dpll core")
 
-            literal_to_use = give_literal(domain, sudokurules)
+            literal_to_use = give_literal(sudokurules)
             back_list = copy.copy(sudokurules)
             back_sudoNumbers = copy.copy(sudokunumbers)
 
             if literal_to_use[0] != '-' and literal_to_use not in sudokunumbers:
                 sudokunumbers.append(literal_to_use)
 
-            if not dpll_2(sudokurules, literal_to_use, domain, sudokunumbers):
+            if not dpll_2(sudokurules, literal_to_use, sudokunumbers):
                 if literal_to_use[0] != '-' and literal_to_use not in sudokunumbers:
                     sudokunumbers.append(literal_to_use)
-                dpll_2(back_list, negate(literal_to_use), domain, back_sudoNumbers)
+                dpll_2(back_list, negate(literal_to_use), back_sudoNumbers)
 
         print("6.0: Finish")
         print("Total time in Seconds :" + format(time.time() - start_time, '.2f'))
