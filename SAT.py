@@ -115,21 +115,25 @@ def check_delete_unit_literals(sudokurules, sudokunumbers):
     literal_list = []
     for rule in sudokurules[:]:
         if len(rule) == 1:
+            #print('Rule:', rule)
+            #print(sudokurules)
+            #print('________________')
             number_unit_literals += 1
             if rule[0][0] != '-':
                 if rule[0] not in sudokunumbers: sudokunumbers.append(rule[0])
             if rule[0] not in literal_list: literal_list.append(rule[0])
 
-    if literal_list:
+    if literal_list :
         remove_clauses(literal_list, sudokurules)
         shorten_clauses(literal_list, sudokurules)
 
-    if number_unit_literals > 1:
+    if number_unit_literals > 1 and [] not in sudokurules:
         check_delete_unit_literals(sudokurules, sudokunumbers)
 
 
 # Implementation of the DP algorithm
 def dpll_2(sudokurules, literal, sudokunumbers):
+
     remove_clauses(literal, sudokurules)
     shorten_clauses(literal, sudokurules)
     # The ceck unit literal has to be here, because could creates the
@@ -145,8 +149,8 @@ def dpll_2(sudokurules, literal, sudokunumbers):
 
     literal_to_use = give_literal(sudokurules)
 
-    back_sudoku_rules = copy.copy(sudokurules)
-    back_sudoku_number = copy.copy(sudokunumbers)
+    back_sudoku_rules = copy.deepcopy(sudokurules)
+    back_sudoku_number = copy.deepcopy(sudokunumbers)
 
     if literal_to_use[0] != '-' and literal_to_use not in sudokunumbers:
         sudokunumbers.append(literal_to_use)
@@ -195,8 +199,8 @@ if __name__ == "__main__":
             print("5.2: Starting the dpll core")
 
             literal_to_use = give_literal(sudokurules)
-            back_list = copy.copy(sudokurules)
-            back_sudoNumbers = copy.copy(sudokunumbers)
+            back_list = copy.deepcopy(sudokurules)
+            back_sudoNumbers = copy.deepcopy(sudokunumbers)
 
             if literal_to_use[0] != '-' and literal_to_use not in sudokunumbers:
                 sudokunumbers.append(literal_to_use)
