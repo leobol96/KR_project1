@@ -21,8 +21,8 @@ if __name__ == "__main__":
         sudoku_rules = common.read_rules(rule_name)
 
         solver = common.chose_solver(version)
-        result = solver.solve(sudoku_numbers, sudoku_rules)
-
+        result, backtrack_number = solver.solve(sudoku_numbers, sudoku_rules)
+        print('The number of backtrack is :', backtrack_number)
         common.writefile(sudoku_name, result, 'dimacs')
 
     elif len(sys.argv) == 2:
@@ -33,7 +33,9 @@ if __name__ == "__main__":
         sudoku_rules = common.read_rules(rule_name)
 
         for sudoku in sudoku_list:
-            result.append(solver.solve(sudoku, common.deep_copy_personalized('rules', sudoku_rules)))
+            result, backtrack_number = solver.solve(sudoku, common.deep_copy_personalized('rules', sudoku_rules))
+            result.append(result)
+            print('The number of backtrack is :', backtrack_number)
         common.writefile(sys.argv[1], result, 'sdk')
 
     print("Finish !")

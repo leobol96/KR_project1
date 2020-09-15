@@ -4,7 +4,8 @@ from solvers import solver
 class CulHeuristicSolver(solver.Solver):
 
     def __init__(self):
-        return
+        self.result = []
+        self.backtrack_number = 0
 
     # The function gives the literal to use in the dpll_2 core.
     # The literal given depends from which version is chosen at the start.
