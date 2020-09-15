@@ -107,7 +107,7 @@ class Solver:
     # Parameter 02: List of rules 
     def solve(self, sudoku_numbers, sudoku_rules):
 
-        print("5.1: Iterating on given numbers")
+        print("Solving ...")
         self.remove_clauses(sudoku_numbers, sudoku_rules)
         self.shorten_clauses(sudoku_numbers, sudoku_rules)
         self.check_delete_unit_literals(sudoku_rules, sudoku_numbers)
@@ -116,7 +116,6 @@ class Solver:
             self.result = sudoku_numbers[:]
             self.result.sort()
         else:
-            print("5.2: Starting the dpll core")
 
             literal_to_use = self.get_literal(sudoku_rules)
             back_sudoku_rules = common.deep_copy_personalized('rules', sudoku_rules)

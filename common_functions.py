@@ -1,9 +1,7 @@
+# File used fot the common function
 import math
-
 from solvers import cul_heuristic_solver as he2, rnd_heuristic_solver as he3, solver, dlis_heuristic_solver as he4
 
-
-# File used fot the common function
 
 # The function reads the single sudoku in DIMACS format
 # Parameter 01: DIMACS sudoku filename
@@ -30,6 +28,8 @@ def read_rules(rules_filename):
                 sudoku_rules.append(splitrow)
     return sudoku_rules
 
+# The function reads the file in sdk format
+# Parameter 01: SDK file
 def read_sdk(sdk_filename):
     to_return = []
     with open(sdk_filename, "r") as sdk:
@@ -54,11 +54,17 @@ def read_sdk(sdk_filename):
 # the name of the file created will be = Name of the input file + 'out.txt'
 # Parameter 01: Name of the input file
 # Parameter 02: List containing the solution of the sat problem
-def writefile(sudoku_out_name, result):
+def writefile(sudoku_out_name, result, type):
     with open(sudoku_out_name.replace('.txt', '.out.txt'), 'w') as output:
         if result:
-            for idx, number in enumerate(result):
-                output.write(number + ' 0\n')
+            if type == 'dimacs':
+                for idx, number in enumerate(result):
+                    output.write(number + ' 0\n')
+            elif type == 'sdk':
+                for sudoku in result:
+                    for literal in sudoku:
+                        output.write(literal[2])
+                    output.write('\n')
 
 
 # The functions read a literal P and returns -P
