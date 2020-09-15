@@ -1,3 +1,5 @@
+import math
+
 from solvers import cul_heuristic_solver as he2, rnd_heuristic_solver as he3, solver, dlis_heuristic_solver as he4
 
 
@@ -16,7 +18,8 @@ def read_sudoku(sudoku_filename, sudokunumbers):
 # The function reads the rules in DIMACS format
 # Parameter 01: DIMACS rule filename
 # Parameter 02: List where insert the rules
-def read_rules(rules_filename, sudokurules):
+def read_rules(rules_filename):
+    sudoku_rules = []
     with open(rules_filename, "r") as rules:
         for row in rules:
             if row[0] == "p":
@@ -24,7 +27,27 @@ def read_rules(rules_filename, sudokurules):
             else:
                 splitrow = row.split()
                 splitrow.pop()
-                sudokurules.append(splitrow)
+                sudoku_rules.append(splitrow)
+    return sudoku_rules
+
+def read_sdk(sdk_filename):
+    to_return = []
+    with open(sdk_filename, "r") as sdk:
+        for line in sdk:
+            sudoku = []
+            line = line.rstrip("\n")
+            max_row = int(math.sqrt(len(line)))
+            col = row = 1
+            for char in line:
+                if char != '.':
+                    sudoku.append(str(col) + str(row) + char)
+                if row == max_row:
+                    row = 1
+                    col += 1
+                else:
+                    row += 1
+            to_return.append(sudoku)
+    return to_return
 
 
 # The function writes the solution of the input in a DIMACS format,
