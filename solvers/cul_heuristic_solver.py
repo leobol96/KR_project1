@@ -1,4 +1,4 @@
-import solver
+from solvers import solver
 
 
 class CulHeuristicSolver(solver.Solver):

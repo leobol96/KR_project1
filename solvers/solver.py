@@ -88,8 +88,8 @@ class Solver:
 
         literal_to_use = self.get_literal(sudoku_rules)
 
-        back_sudoku_rules = copy.deepcopy(sudoku_rules)
-        back_sudoku_number = copy.deepcopy(sudoku_numbers)
+        back_sudoku_rules = common.deep_copy_personalized('rules', sudoku_rules)
+        back_sudoku_number = common.deep_copy_personalized('literal', sudoku_numbers)
 
         if literal_to_use[0] != '-' and literal_to_use not in sudoku_numbers:
             sudoku_numbers.append(literal_to_use)
@@ -119,16 +119,16 @@ class Solver:
             print("5.2: Starting the dpll core")
 
             literal_to_use = self.get_literal(sudoku_rules)
-            back_list = copy.deepcopy(sudoku_rules)
-            back_sudoNumbers = copy.deepcopy(sudoku_numbers)
+            back_sudoku_rules = common.deep_copy_personalized('rules', sudoku_rules)
+            back_sudoku_number = common.deep_copy_personalized('literal', sudoku_numbers)
 
             if literal_to_use[0] != '-' and literal_to_use not in sudoku_numbers:
                 sudoku_numbers.append(literal_to_use)
 
             if not self.dpll_2(sudoku_rules, literal_to_use, sudoku_numbers):
                 if (common.negate(literal_to_use))[0] != '-' and common.negate(literal_to_use) not in sudoku_numbers:
-                    back_sudoNumbers.append(common.negate(literal_to_use))
-                self.dpll_2(back_list, common.negate(literal_to_use), back_sudoNumbers)
+                    back_sudoku_number.append(common.negate(literal_to_use))
+                self.dpll_2(back_sudoku_rules, common.negate(literal_to_use), back_sudoku_number)
 
         return self.result
 

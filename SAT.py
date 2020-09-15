@@ -3,22 +3,6 @@ import time
 import common_functions as common
 
 
-# Doesn't work
-def dlis_heuristic(sudokurules):
-    hashmap = {}
-    for rule in sudokurules:
-        for literal in rule:
-            hashmap[literal] = hashmap.get(literal, 0) + 1
-
-    n_time = 0
-    for key in hashmap:
-        if hashmap.get(key) > n_time:
-            to_return = key
-            n_time = hashmap.get(key)
-
-    return to_return
-
-
 if __name__ == "__main__":
 
     if len(sys.argv) < 4:

@@ -1,5 +1,4 @@
-import solver
-import cul_heuristic_solver as he3
+from solvers import cul_heuristic_solver as he2, rnd_heuristic_solver as he3, solver, dlis_heuristic_solver as he4
 
 
 # File used fot the common function
@@ -53,7 +52,28 @@ def negate(literal_to_negate):
 # Parameter 01: Argument passed in command line
 # Return: the correct instance of the solver
 def chose_solver(version):
-    if version == '-S3':
-        return he3.CulHeuristicSolver()
+    if version == '-S2':
+        return he2.CulHeuristicSolver()
+    elif version == '-S3':
+        return he3.RndHeuristiSolver()
+    elif version == '-S4':
+        return he4.DlisHeuristicSolver()
     else:
         return solver.Solver()
+
+
+# The function has been developed because the copy.deepcopy is to expensive
+# Parameter 01: Type of list to copy
+# Parameter 02: List to copy
+def deep_copy_personalized(type, list):
+    to_return = []
+    if type == 'literal':
+        for literal in list:
+            to_return.append(literal)
+    elif type == 'rules':
+        for rules in list:
+            rule = []
+            for literal in rules:
+                rule.append(literal)
+            to_return.append(rule)
+    return to_return
