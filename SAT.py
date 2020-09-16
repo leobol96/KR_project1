@@ -26,17 +26,17 @@ if __name__ == "__main__":
         common.writefile(sudoku_name, result, 'dimacs')
 
     elif len(sys.argv) == 2:
-        result = []
+        result_list = []
         sudoku_list = common.read_sdk(sys.argv[1])
-        solver = common.chose_solver('-S2')
         rule_name = 'sudoku-rules.txt'
         sudoku_rules = common.read_rules(rule_name)
 
         for sudoku in sudoku_list:
+            solver = common.chose_solver('-S1')
             result, backtrack_number = solver.solve(sudoku, common.deep_copy_personalized('rules', sudoku_rules))
-            result.append(result)
+            result_list.append(result)
             print('The number of backtrack is :', backtrack_number)
-        common.writefile(sys.argv[1], result, 'sdk')
+        common.writefile(sys.argv[1], result_list, 'sdk')
 
     print("Finish !")
     print("Total time in Seconds :" + format(time.time() - start_time, '.2f'))
