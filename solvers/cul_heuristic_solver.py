@@ -11,9 +11,7 @@ class CulHeuristicSolver(solver.Solver):
     # The literal given depends from which version is chosen at the start.
     # Parameter 01: List of rules
     def get_literal(self, sudoku_rules):
-        idx_len_clauses = 2
-        while True:
+        for x in range(2, 10):
             for rule in sudoku_rules:
-                if len(rule) == idx_len_clauses:
+                if len(rule) == x:
                     return rule[0]
-            idx_len_clauses += 1
