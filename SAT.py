@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
         result_list = []
         back_track_list = []
-        rule_name = 'sudoku-rules-x.txt'
+        rule_name = 'sudoku-rules.txt'
         solvers = ['-S1', '-S2', '-S3', '-S5']
 
         # Read the rules file, with the sdk option the rules file will be always the 9x9
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     # Case with sdk for the experiment
     elif len(sys.argv) == 3 and sys.argv[1] == '-E':
 
-        rule_name = 'sudoku-rules.txt'
+        rules_files = ['sudoku-rules.txt', 'sudoku-rules-x.txt']
         solvers = ['-S1', '-S2', '-S3', '-S5']
         solvers_name = []
         solvers_averages_times = []
@@ -80,43 +80,62 @@ if __name__ == "__main__":
         solvers_averages_times_x_sudoku = []
         solvers_averages_backtrack_x_sudoku = []
 
-        # Read the rules file, with the sdk option the rules file will be always the 9x9
-        sudoku_rules = common.read_rules(rule_name)
         # Read the list of sudoku to solve
         sudoku_list = common.read_sdk(sys.argv[2])
+        for idx_rule,rule in enumerate(rules_files):
+            # Read the rules file, with the sdk option the rules file will be always the 9x9
+            sudoku_rules = common.read_rules(rule)
 
-        for solver in solvers:
-            solver = common.chose_solver(solver)
-            result_list = []
-            back_track_list = []
-            for idx, sudoku in enumerate(sudoku_list):
-                result, backtrack_number = solver.solve(common.deep_copy_personalized('literal', sudoku),
-                                                        common.deep_copy_personalized('rules', sudoku_rules))
-                result_list.append(result)
-                back_track_list.append(backtrack_number)
-                print('Line:', idx + 1, '| Algorithm:', solver.get_name(), '| The number of backtrack is:',
-                      backtrack_number)
-            print('--------------------------------------')
-            solvers_name.append(solver.get_name())
-            solvers_averages_backtrack.append(sum(back_track_list) / len(back_track_list))
-            solvers_averages_times.append(format((time.time() - start_time) / len(back_track_list), '.2f'))
+            # For each heuristic solvers
+            for solver in solvers:
+                solver = common.chose_solver(solver)
+                result_list = []
+                back_track_list = []
+                start_time = time.time()
+                for idx, sudoku in enumerate(sudoku_list):
+                    result, backtrack_number = solver.solve(common.deep_copy_personalized('literal', sudoku),
+                                                            common.deep_copy_personalized('rules', sudoku_rules))
+                    result_list.append(result)
+                    back_track_list.append(backtrack_number)
+                    print(rule, '| Line:', idx + 1, '| Algorithm:', solver.get_name(), '| The number of backtrack is:',
+                          backtrack_number)
+                print('--------------------------------------')
 
-        # Draw the chart
-        y_pos = np.arange(len(solvers_name))
-        plt.bar(y_pos, solvers_averages_backtrack)
-        plt.xticks(y_pos, solvers_name)
-        plt.xlabel('Algorithm')
-        plt.ylabel('BackTrack')
-        plt.title('The average number of backtrack with different algorithms')
-        plt.grid(True)
+                if idx_rule == 0:
+                    solvers_name.append(solver.get_name())
+                if rule == 'sudoku-rules.txt':
+                    solvers_averages_backtrack.append(sum(back_track_list) / len(back_track_list))
+                    solvers_averages_times.append(format((time.time() - start_time) / len(back_track_list), '.2f'))
+                    common.writefile(sys.argv[2], result_list, 'sdk')
+                else:
+                    solvers_averages_backtrack_x_sudoku.append(sum(back_track_list) / len(back_track_list))
+                    solvers_averages_times_x_sudoku.append(format((time.time() - start_time) / len(back_track_list), '.2f'))
+                    common.writefile(sys.argv[2].replace('.txt', 'x.txt'), result_list, 'sdk')
+
+        # Draw plot
+        n_algorithm = np.arange(len(solvers_name))
+        bar_width = 0.35
+        fig, ax = plt.subplots()
+        Normal = ax.bar(n_algorithm - bar_width/2, solvers_averages_backtrack, bar_width, label="Normal")
+        x_sudoku = ax.bar(n_algorithm + bar_width/2, solvers_averages_backtrack_x_sudoku, bar_width, label="X-Sudoku")
+        ax.set_xlabel('Algorithm')
+        ax.set_ylabel('BackTrack')
+        ax.set_title('Average of BackTrack in normal sudoku and x sudoku')
+        ax.set_xticks(n_algorithm)
+        ax.set_xticklabels(solvers_name)
+        ax.legend()
         plt.show()
-        print(solvers_name)
-        print(solvers_averages_times)
-        print(solvers_averages_backtrack)
 
-        print("-----------------------------------")
-        print("Finish !")
-        print("Total time in Seconds :" + format(time.time() - start_time, '.2f'))
+        print("---------- Average BackTrack----------------")
+        print(solvers_name)
+        print('Normal', solvers_averages_backtrack)
+        print('X sudoku', solvers_averages_backtrack_x_sudoku)
+
+        print("---------- Average Time------------------")
+        print(solvers_name)
+        print('Normal', solvers_averages_times)
+        print('X sudoku', solvers_averages_times_x_sudoku)
+
 
 
     # Help
