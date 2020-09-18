@@ -19,7 +19,7 @@ def readFile_createSudoku(fileName,filesPath):
         max_row = int(math.sqrt(len(sudoku)))
         col = row = 1   
         fileToCreate = 'sudoku' + str(idx + 1)
-        f= open(filesPath + '/' + fileToCreate,"w")
+        f= open(filesPath + '/' + fileToCreate + '.txt',"w")
         sukoku_onlyNumber = sudoku.replace('.', '')
         idx_number = 1
 

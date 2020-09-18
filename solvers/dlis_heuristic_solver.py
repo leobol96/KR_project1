@@ -36,3 +36,7 @@ class DlisHeuristicSolver(solver.Solver):
             return '-' + str(idx - 1000)
         else:
             return str(idx)
+
+    # The function returns the name of the algorithm
+    def get_name(self):
+        return 'Dlis Heuristic'

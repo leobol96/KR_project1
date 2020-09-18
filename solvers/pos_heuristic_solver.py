@@ -16,3 +16,8 @@ class PosHeuristicSolver(solver.Solver):
                 if rule[0][0] != '-' and len(rule) == x:
                     return rule[0]
 
+    # The function returns the name of the algorithm
+    def get_name(self):
+        return 'Pos Heuristic'
+
+

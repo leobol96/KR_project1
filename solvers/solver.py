@@ -54,7 +54,8 @@ class Solver:
                 if rule[0][0] != '-':
                     if rule[0] not in sudoku_numbers: sudoku_numbers.append(rule[0])
                 # Check also for the negate, because creating a list with P and -P it causes problem
-                if rule[0] not in literal_list and common.negate(rule[0]) not in literal_list: literal_list.append(rule[0])
+                if rule[0] not in literal_list and common.negate(rule[0]) not in literal_list: literal_list.append(
+                    rule[0])
 
         # Optimizing shorten and remove
         if literal_list:
@@ -70,6 +71,10 @@ class Solver:
     # Parameter 01: List of rules
     def get_literal(self, sudoku_rules):
         return sudoku_rules[0][0]
+
+    # The function returns the name of the algorithm
+    def get_name(self):
+        return 'General'
 
     # The function is the core part of the algorithm Davis-Putman.
     # With the recursion paradigm ir solves the SAT problem.
@@ -114,7 +119,7 @@ class Solver:
         self.result = []
         self.backtrack_number = 0
 
-        #print("Solving ...")
+        # print("Solving ...")
         self.remove_clauses(sudoku_numbers, sudoku_rules)
         self.shorten_clauses(sudoku_numbers, sudoku_rules)
         self.check_delete_unit_literals(sudoku_rules, sudoku_numbers)
@@ -133,10 +138,9 @@ class Solver:
 
             if not self.dpll_2(sudoku_rules, literal_to_use, sudoku_numbers):
                 self.backtrack_number += 1
-                if (common.negate(literal_to_use))[0] != '-' and common.negate(literal_to_use) not in back_sudoku_number:
+                if (common.negate(literal_to_use))[0] != '-' and common.negate(
+                        literal_to_use) not in back_sudoku_number:
                     back_sudoku_number.append(common.negate(literal_to_use))
                 self.dpll_2(back_sudoku_rules, common.negate(literal_to_use), back_sudoku_number)
 
         return self.result, self.backtrack_number
-
-

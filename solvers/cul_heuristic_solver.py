@@ -15,3 +15,8 @@ class CulHeuristicSolver(solver.Solver):
             for rule in sudoku_rules:
                 if len(rule) == x:
                     return rule[0]
+
+    # The function returns the name of the algorithm
+    def get_name(self):
+        return 'Cul Heuristic'
+

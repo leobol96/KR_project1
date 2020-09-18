@@ -13,3 +13,7 @@ class RndHeuristiSolver(solver.Solver):
     # Parameter 01: List of rules
     def get_literal(self, sudoku_rules):
         return random.choice(random.choice(sudoku_rules))
+
+    # The function returns the name of the algorithm
+    def get_name(self):
+        return 'Random heuristic'
