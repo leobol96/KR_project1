@@ -92,6 +92,7 @@ class Solver:
             self.result = sudoku_numbers[:]
             return True
         if [] in sudoku_rules:
+            self.backtrack_number += 1
             return False
 
         literal_to_use = self.get_literal(sudoku_rules)
@@ -105,7 +106,6 @@ class Solver:
         if self.dpll_2(sudoku_rules, literal_to_use, sudoku_numbers):
             return True
         else:
-            self.backtrack_number += 1
             if (common.negate(literal_to_use))[0] != '-' and common.negate(literal_to_use) not in back_sudoku_number:
                 back_sudoku_number.append(common.negate(literal_to_use))
             return self.dpll_2(back_sudoku_rules, common.negate(literal_to_use), back_sudoku_number)
@@ -137,7 +137,6 @@ class Solver:
                 sudoku_numbers.append(literal_to_use)
 
             if not self.dpll_2(sudoku_rules, literal_to_use, sudoku_numbers):
-                self.backtrack_number += 1
                 if (common.negate(literal_to_use))[0] != '-' and common.negate(
                         literal_to_use) not in back_sudoku_number:
                     back_sudoku_number.append(common.negate(literal_to_use))
