@@ -1,6 +1,6 @@
 # File used fot the common function
 import math
-from solvers import cul_heuristic_solver as he2, rnd_heuristic_solver as he3, solver, dlis_heuristic_solver as he4, pos_heuristic_solver as he5
+from solvers import cul_heuristic_solver as he2, rnd_heuristic_solver as he3, solver, hum_heuristic_solver as he4, pos_heuristic_solver as he5
 
 
 # The function reads the single sudoku in DIMACS format
@@ -86,7 +86,7 @@ def chose_solver(version):
     elif version == '-S3':
         return he3.RndHeuristiSolver()
     elif version == '-S4':
-        return he4.DlisHeuristicSolver()
+        return he4.HumHeuristicSolver()
     elif version == '-S5':
         return he5.PosHeuristicSolver()
     else:

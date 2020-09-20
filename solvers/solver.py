@@ -69,7 +69,7 @@ class Solver:
     # The literal given depends from which version is chosen at the start.
     # For the heuristics versions, this method is overwritten
     # Parameter 01: List of rules
-    def get_literal(self, sudoku_rules):
+    def get_literal(self, sudoku_rules, sudoku_numbers):
         return sudoku_rules[0][0]
 
     # The function returns the name of the algorithm
@@ -95,7 +95,7 @@ class Solver:
             self.backtrack_number += 1
             return False
 
-        literal_to_use = self.get_literal(sudoku_rules)
+        literal_to_use = self.get_literal(sudoku_rules, sudoku_numbers)
 
         back_sudoku_rules = common.deep_copy_personalized('rules', sudoku_rules)
         back_sudoku_number = common.deep_copy_personalized('literal', sudoku_numbers)
@@ -129,7 +129,7 @@ class Solver:
             self.result.sort()
         else:
 
-            literal_to_use = self.get_literal(sudoku_rules)
+            literal_to_use = self.get_literal(sudoku_rules, sudoku_numbers)
             back_sudoku_rules = common.deep_copy_personalized('rules', sudoku_rules)
             back_sudoku_number = common.deep_copy_personalized('literal', sudoku_numbers)
 

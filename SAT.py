@@ -44,7 +44,6 @@ if __name__ == "__main__":
         result_list = []
         back_track_list = []
         rule_name = 'sudoku-rules.txt'
-        solvers = ['-S1', '-S2', '-S3', '-S5']
 
         # Read the rules file, with the sdk option the rules file will be always the 9x9
         sudoku_rules = common.read_rules(rule_name)
@@ -73,7 +72,7 @@ if __name__ == "__main__":
     elif len(sys.argv) == 3 and sys.argv[1] == '-E':
 
         rules_files = ['sudoku-rules.txt', 'sudoku-rules-x.txt']
-        solvers = ['-S1', '-S2', '-S3', '-S5']
+        solvers = ['-S1', '-S2', '-S3', 's4', '-S5']
         solvers_name = []
         solvers_averages_times = []
         solvers_averages_backtrack = []
