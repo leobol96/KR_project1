@@ -18,5 +18,5 @@ class CulHeuristicSolver(solver.Solver):
 
     # The function returns the name of the algorithm
     def get_name(self):
-        return 'Cul Heuristic'
+        return 'Cul'
 

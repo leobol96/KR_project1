@@ -48,6 +48,6 @@ class HumHeuristicSolver(solver.Solver):
 
     # The function returns the name of the algorithm
     def get_name(self):
-        return 'Hum Heuristic'
+        return 'Hum'
 
 
