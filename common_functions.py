@@ -1,24 +1,36 @@
 # File used fot the common function
 import math
-from solvers import cul_heuristic_solver as he2, rnd_heuristic_solver as he3, solver, hum_heuristic_solver as he4, pos_heuristic_solver as he5
+from solvers import cul_heuristic_solver as he2, rnd_heuristic_solver as he3, solver, hum_heuristic_solver as he4, \
+    pos_heuristic_solver as he5
 
 
-# The function reads the single sudoku in DIMACS format
-# Parameter 01: DIMACS sudoku filename
-# Parameter 02: List where insert the numbers of the sudoku given at the start
-def read_sudoku(sudoku_filename, sudokunumbers):
-    with open(sudoku_filename, "r") as sudoku:
+def read_sudoku(filename, sudoku_numbers):
+    """
+    The function reads the problem given in DIMACS format
+
+    Args:
+        filename: Name of the file to read
+        sudoku_numbers: List of numbers already present in the sudoku solution
+
+    """
+
+    with open(filename, "r") as sudoku:
         for number in sudoku:
             end_number = number.split()
-            sudokunumbers.append(end_number[0])
+            sudoku_numbers.append(end_number[0])
 
 
-# The function reads the rules in DIMACS format
-# Parameter 01: DIMACS rule filename
-# Parameter 02: List where insert the rules
-def read_rules(rules_filename):
+def read_rules(filename):
+    """
+    The function reads the rules of the problem in DIMACS format
+
+    Args:
+        filename: Name of the file to read
+
+    """
+
     sudoku_rules = []
-    with open(rules_filename, "r") as rules:
+    with open(filename, "r") as rules:
         for row in rules:
             if row[0] == "p":
                 pass
@@ -28,11 +40,20 @@ def read_rules(rules_filename):
                 sudoku_rules.append(splitrow)
     return sudoku_rules
 
-# The function reads the file in sdk format
-# Parameter 01: SDK file
-def read_sdk(sdk_filename):
+
+def read_sdk(filename):
+    """
+    The function reads a list of SAT problems in a sdk format
+
+    Args:
+        filename: Name of the file in sdk formats
+
+    Returns:
+
+    """
+
     to_return = []
-    with open(sdk_filename, "r") as sdk:
+    with open(filename, "r") as sdk:
         for line in sdk:
             sudoku = []
             line = line.rstrip("\n")
@@ -50,12 +71,19 @@ def read_sdk(sdk_filename):
     return to_return
 
 
-# The function writes the solution of the input in a DIMACS format,
-# the name of the file created will be = Name of the input file + 'out.txt'
-# Parameter 01: Name of the input file
-# Parameter 02: List containing the solution of the sat problem
-def writefile(sudoku_out_name, result, type):
-    with open(sudoku_out_name.replace('.txt', '.out.txt'), 'w') as output:
+def writefile(filename, result, type):
+    """
+    The function writes the solution.
+    The solution could be written in the two different formats DIMACS and SDK
+
+    Args:
+        filename: Name of the file to create
+        result: Result to write in the DIMACS file
+        type: Dimacs or SDK, it depends from the type of the file to write
+
+    """
+
+    with open(filename.replace('.txt', '.out.txt'), 'w') as output:
         if result:
             if type == 'dimacs':
                 for idx, number in enumerate(result):
@@ -67,20 +95,34 @@ def writefile(sudoku_out_name, result, type):
                     output.write('\n')
 
 
-# The functions read a literal P and returns -P
-# Parameter 01: Literal to deny
-# Return : The denied of the literal passed as parameter
-def negate(literal_to_negate):
-    if literal_to_negate[0] == '-':
-        return literal_to_negate[1:]
+def negate(literal):
+    """
+    The function denies the literal passed as parameter
+
+    Args:
+        literal: Literal to deny
+
+    Returns:
+        The denied of the literal passed as parameter
+    """
+
+    if literal[0] == '-':
+        return literal[1:]
     else:
-        return '-' + literal_to_negate
+        return '-' + literal
 
 
-# The function return the correct instance of the solver given the argument passed as parameter
-# Parameter 01: Argument passed in command line
-# Return: the correct instance of the solver
 def chose_solver(version):
+    """
+    The function returns the correct instance of the solver given the argument passed as parameter
+
+    Args:
+        version: Version of the solver
+
+    Returns:
+        Instance of the solver chosen
+
+    """
     if version == '-S2':
         return he2.CulHeuristicSolver()
     elif version == '-S3':
@@ -93,10 +135,19 @@ def chose_solver(version):
         return solver.Solver()
 
 
-# The function has been developed because the copy.deepcopy is to expensive
-# Parameter 01: Type of list to copy
-# Parameter 02: List to copy
 def deep_copy_personalized(type, list):
+    """
+    The function deepcopy the object passed as parameter.
+    The function has been developed because the copy.deepcopy is to expensive
+
+    Args:
+        type: Type of list to copy (list of literal or list of rules)
+        list: List to copy
+
+    Returns:
+        Deepcopy of the list
+    """
+
     to_return = []
     if type == 'literal':
         for literal in list:
