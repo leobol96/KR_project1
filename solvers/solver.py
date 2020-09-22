@@ -1,17 +1,27 @@
 import common_functions as common
-import copy
 
 
 class Solver:
+    """
+    The Solver is in charge of solving the SAT problem.
+    Inside it contains the dpll_2 algorithm in a general version.
+
+    """
 
     def __init__(self):
         self.result = []
         self.backtrack_number = 0
 
-    # This function removes the clauses from the rules list that have the literal passed as parameter.
-    # Parameter 01: Literal used to remove the clauses
-    # Parameter 02: List of clauses where to apply the function
     def remove_clauses(self, literal, sudoku_rules):
+        """
+        This method removes the clauses from the rules list that have the literal passed as parameter.
+
+        Args:
+            literal: Literal to remove
+            sudoku_rules: List of clauses where delete the literal
+
+        """
+
         for rule in sudoku_rules[:]:
             for number in rule[:]:
                 if isinstance(literal, list):
@@ -24,12 +34,16 @@ class Solver:
                         sudoku_rules.remove(rule)
                         break
 
-    # This function shorts the clauses from the rules list that have the literal passed as parameter.
-    # Parameter 01: Literal used to remove the clauses
-    # Parameter 02: List of clauses where to apply the function
     def shorten_clauses(self, literal, sudoku_rules):
-        # The symbol [:] it 's used to work with a copy of the original element. Deleting objects where you are working
-        # could cause problems
+        """
+        This function shorts the clauses from the rules list that have the literal passed as parameter.
+
+        Args:
+            literal: Literal to use for shortening the clauses
+            sudoku_rules: List of clauses to be shortened
+
+        """
+
         for rule in sudoku_rules[:]:
             for number in rule[:]:
                 if isinstance(literal, list):
@@ -40,12 +54,16 @@ class Solver:
                     if common.negate(number) == literal:
                         rule.remove(number)
 
-    # This function iterates over the rule to find any pure literals.
-    # If a pure literal is found, the remove and shorten functions are called.
-    # At the end the function calls itself if it finds some pure literals
-    # Parameter 01: List of rules
-    # Parameter 02: List of number given at the start
     def check_delete_unit_literals(self, sudoku_rules, sudoku_numbers):
+        """
+        This function iterates over the rules to find unit literals.
+        If a unit literal is found, the remove and shorten functions are called over it.
+
+        Args:
+            sudoku_rules: List of rules
+            sudoku_numbers: List of numbers already present in the sudoku solution
+
+        """
         number_unit_literals = 0
         literal_list = []
         for rule in sudoku_rules[:]:
@@ -65,23 +83,44 @@ class Solver:
         if number_unit_literals > 1 and [] not in sudoku_rules:
             self.check_delete_unit_literals(sudoku_rules, sudoku_numbers)
 
-    # The function gives the literal to use in the dpll_2 core.
-    # The literal given depends from which version is chosen at the start.
-    # For the heuristics versions, this method is overwritten
-    # Parameter 01: List of rules
     def get_literal(self, sudoku_rules, sudoku_numbers):
+        """
+        The methods return the literal to use in the next iteration of the dpll core
+
+        Args:
+            sudoku_rules: List of rules
+            sudoku_numbers: List of literals already present in the sudoku solution
+
+        Returns:
+            The literal to use in the dpll core
+
+        """
+
         return sudoku_rules[0][0]
 
-    # The function returns the name of the algorithm
     def get_name(self):
+        """
+        The method returns the name of the heuristic.
+
+        Returns:
+            Name of the heuristic
+
+        """
         return 'General'
 
-    # The function is the core part of the algorithm Davis-Putman.
-    # With the recursion paradigm ir solves the SAT problem.
-    # Parameter 01: The list of rules
-    # Parameter 02: Literal to delete from the rules
-    # Parameter 03: List of numbers used in the solution
     def dpll_2(self, sudoku_rules, literal, sudoku_numbers):
+        """
+        The function is the core part of the algorithm Davis-Putman.
+        With the recursion paradigm it solves the SAT problem.
+
+        Args:
+            sudoku_rules: List of rules
+            literal: Literal to delete from the rules and to add at the solution
+            sudoku_numbers: List of literals already present in the sudoku solution
+
+        Returns:
+            True if the problem has a solution, false otherwise
+        """
 
         self.remove_clauses(literal, sudoku_rules)
         self.shorten_clauses(literal, sudoku_rules)
@@ -110,11 +149,18 @@ class Solver:
                 back_sudoku_number.append(common.negate(literal_to_use))
             return self.dpll_2(back_sudoku_rules, common.negate(literal_to_use), back_sudoku_number)
 
-    # This function is the start point of the solving part
-    # Some steps are performed before the dpll core in order to optimizing the solver.
-    # Parameter 01: List of number given at the start.
-    # Parameter 02: List of rules 
     def solve(self, sudoku_numbers, sudoku_rules):
+        """
+        This function is the start point of the solving part
+        Some steps are performed before the dpll core in order to optimizing the solver.
+
+        Args:
+            sudoku_numbers: List of literals already present in the sudoku solution
+            sudoku_rules: List of rules
+
+        Returns:
+            List of positive literal present in the solution and number of backtrack found during the resolution of the problem
+        """
 
         self.result = []
         self.backtrack_number = 0
