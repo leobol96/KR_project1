@@ -27,7 +27,7 @@ class HumHeuristicSolver(solver.Solver):
 
         Sudoku numbers
             1 * * *
-            1 * * *
+            2 * * *
             * * * 1
             * * * *
 
