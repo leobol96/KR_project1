@@ -159,3 +159,24 @@ def deep_copy_personalized(type, list):
                 rule.append(literal)
             to_return.append(rule)
     return to_return
+
+
+def filter_sat_solution(sat_solution):
+    """
+    Function to filter the sat solution.
+    The function returns only the element used in the sudoku
+
+    Args:
+        sat_solution: Sat solution to be filtered
+
+    Returns:
+        Sudoku solution
+
+    """
+    result = []
+    for literal in sat_solution:
+        if literal[0] != '-':
+            result.append(literal)
+    result.sort()
+    return result
+

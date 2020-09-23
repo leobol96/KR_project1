@@ -69,8 +69,7 @@ class Solver:
         for rule in sudoku_rules[:]:
             if len(rule) == 1:
                 number_unit_literals += 1
-                if rule[0][0] != '-':
-                    if rule[0] not in sudoku_numbers: sudoku_numbers.append(rule[0])
+                if rule[0] not in sudoku_numbers: sudoku_numbers.append(rule[0])
                 # Check also for the negate, because creating a list with P and -P it causes problem
                 if rule[0] not in literal_list and common.negate(rule[0]) not in literal_list: literal_list.append(
                     rule[0])
@@ -139,13 +138,13 @@ class Solver:
         back_sudoku_rules = common.deep_copy_personalized('rules', sudoku_rules)
         back_sudoku_number = common.deep_copy_personalized('literal', sudoku_numbers)
 
-        if literal_to_use[0] != '-' and literal_to_use not in sudoku_numbers:
+        if literal_to_use not in sudoku_numbers:
             sudoku_numbers.append(literal_to_use)
 
         if self.dpll_2(sudoku_rules, literal_to_use, sudoku_numbers):
             return True
         else:
-            if (common.negate(literal_to_use))[0] != '-' and common.negate(literal_to_use) not in back_sudoku_number:
+            if common.negate(literal_to_use) not in back_sudoku_number:
                 back_sudoku_number.append(common.negate(literal_to_use))
             return self.dpll_2(back_sudoku_rules, common.negate(literal_to_use), back_sudoku_number)
 
@@ -179,13 +178,15 @@ class Solver:
             back_sudoku_rules = common.deep_copy_personalized('rules', sudoku_rules)
             back_sudoku_number = common.deep_copy_personalized('literal', sudoku_numbers)
 
-            if literal_to_use[0] != '-' and literal_to_use not in sudoku_numbers:
+            if literal_to_use not in sudoku_numbers:
                 sudoku_numbers.append(literal_to_use)
 
             if not self.dpll_2(sudoku_rules, literal_to_use, sudoku_numbers):
-                if (common.negate(literal_to_use))[0] != '-' and common.negate(
-                        literal_to_use) not in back_sudoku_number:
+                if common.negate(literal_to_use) not in back_sudoku_number:
                     back_sudoku_number.append(common.negate(literal_to_use))
                 self.dpll_2(back_sudoku_rules, common.negate(literal_to_use), back_sudoku_number)
 
         return self.result, self.backtrack_number
+
+
+

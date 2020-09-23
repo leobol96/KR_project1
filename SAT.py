@@ -3,85 +3,84 @@ import time
 import common_functions as common
 import numpy as np
 import matplotlib.pyplot as plt
+import statistics
 
 if __name__ == "__main__":
 
     print("Starting ...")
-    start_time = time.time()
+    solvers = ['-S1', '-S2', '-S3', '-S4', '-S5']
 
-    # Case with one sudoku.txt e one sudoku_rules.txt
-    # The output will be a DIMACS file
-    if len(sys.argv) == 4:
+    if len(sys.argv) == 4 and sys.argv[1] in solvers:
 
-        sudoku_numbers = []
-        sudoku_rules = []
-        result = []
         version = sys.argv[1]
-        sudoku_name = sys.argv[2]
-        rule_name = sys.argv[3]
+        rule_file = sys.argv[2]
+        input_file = sys.argv[3]
+        result_single = []
 
-        # Reading the sudoku given
-        common.read_sudoku(sudoku_name, sudoku_numbers)
-        # Reading the rules file
-        sudoku_rules = common.read_rules(rule_name)
-        # Creating a new instance of the solver using the version given from command line
+        sudoku_rules = common.read_rules(rule_file)
         solver = common.chose_solver(version)
-        # Solving the sudoku
-        result, backtrack_number = solver.solve(sudoku_numbers, sudoku_rules)
-        print('The number of backtrack is :', backtrack_number)
-        # Writing the solution in DIMACS format
-        common.writefile(sudoku_name, result, 'dimacs')
 
-        print("-----------------------------------")
-        print("Finish !")
-        print("Total time in Seconds :" + format(time.time() - start_time, '.2f'))
+        if 'sdk' not in input_file:
+            sudoku_numbers = []
 
-
-    # Case with one file.sdk
-    # The output file will be a sdk.out with the solutions of all the sudoku present in the input file
-    elif len(sys.argv) == 2:
-
-        result_list = []
-        back_track_list = []
-        rule_name = 'sudoku-rules.txt'
-
-        # Read the rules file, with the sdk option the rules file will be always the 9x9
-        sudoku_rules = common.read_rules(rule_name)
-        # Read the list of sudoku to solve
-        sudoku_list = common.read_sdk(sys.argv[1])
-
-        # Creating a new instance of the sudoku, using the best heuristic of the solver
-        solver = common.chose_solver('-S1')
-        for sudoku in sudoku_list:
-            result, backtrack_number = solver.solve(sudoku, common.deep_copy_personalized('rules', sudoku_rules))
-            result_list.append(result)
-            back_track_list.append(backtrack_number)
+            common.read_sudoku(input_file, sudoku_numbers)
+            # Solving the SAT problem
+            start_time = time.time()
+            result_single, backtrack_number = solver.solve(sudoku_numbers, sudoku_rules)
             print('The number of backtrack is :', backtrack_number)
-        # Writing the file sdk.out with all the sudoku solved
-        common.writefile(sys.argv[1], result_list, 'sdk')
-        print("-----------------------------------")
-        print('The average of backtrack is :' + str(sum(back_track_list) / len(back_track_list)))
-        print('The average time is :' + format((time.time() - start_time) / len(back_track_list), '.2f'))
+            end_time = format(time.time() - start_time, '.2f')
+            common.writefile(input_file, result_single, 'dimacs')
 
-        print("-----------------------------------")
-        print("Finish !")
-        print("Total time in Seconds :" + format(time.time() - start_time, '.2f'))
+            print("-----------------------------------")
+            print("Finish !")
+            print("Total time in Seconds :" + end_time)
+
+        else:
+
+            result_list = []
+            back_track_list = []
+            times_list = []
+            sudoku_list = common.read_sdk(input_file)
+
+            for sudoku in sudoku_list:
+                start_time = time.time()
+                result_single, backtrack_number = solver.solve(sudoku,
+                                                               common.deep_copy_personalized('rules', sudoku_rules))
+                times_list.append(time.time() - start_time)
+                result_list.append(common.filter_sat_solution(result_single))
+                back_track_list.append(backtrack_number)
+                print('The number of backtrack is :', backtrack_number)
+
+            common.writefile(input_file, result_list, 'sdk')
+            print("-----------------------------------")
+            print('The average of backtrack is :' + str(sum(back_track_list) / len(back_track_list)))
+            print('The average time is :' + format(sum(times_list) / len(times_list), '.2f'))
+
+            print("-----------------------------------")
+            print("Finish !")
+            print("Total time in Seconds :" + format(time.time() - start_time, '.2f'))
 
 
-    # Case with sdk for the experiment
-    elif len(sys.argv) == 3 and sys.argv[1] == '-E':
+    elif len(sys.argv) == 4 and sys.argv[1] == '-E':
 
         rules_files = ['sudoku-rules.txt', 'sudoku-rules-x.txt']
-        solvers = ['-S1', '-S2', '-S3', 's4', '-S5']
         solvers_name = []
         solvers_averages_times = []
         solvers_averages_backtrack = []
+        solvers_medians_backtrack = []
+        solvers_std_backtrack = []
         solvers_averages_times_x_sudoku = []
         solvers_averages_backtrack_x_sudoku = []
+        solvers_medians_backtrack_x_sudoku = []
+        solvers_std_backtrack_x_sudoku = []
 
-        # Read the list of sudoku to solve
-        sudoku_list = common.read_sdk(sys.argv[2])
-        for idx_rule,rule in enumerate(rules_files):
+        for idx_rule, rule in enumerate(rules_files):
+            # Read the list of sudoku to solve
+            if rule == rules_files[0]:
+                sudoku_list = common.read_sdk(sys.argv[2])
+            else:
+                sudoku_list = common.read_sdk(sys.argv[3])
+
             # Read the rules file, with the sdk option the rules file will be always the 9x9
             sudoku_rules = common.read_rules(rule)
 
@@ -90,11 +89,14 @@ if __name__ == "__main__":
                 solver = common.chose_solver(solver)
                 result_list = []
                 back_track_list = []
-                start_time = time.time()
+                times_list = []
+
                 for idx, sudoku in enumerate(sudoku_list):
-                    result, backtrack_number = solver.solve(common.deep_copy_personalized('literal', sudoku),
-                                                            common.deep_copy_personalized('rules', sudoku_rules))
-                    result_list.append(result)
+                    start_time = time.time()
+                    result_single, backtrack_number = solver.solve(common.deep_copy_personalized('literal', sudoku),
+                                                                   common.deep_copy_personalized('rules', sudoku_rules))
+                    times_list.append(time.time() - start_time)
+                    result_list.append(common.filter_sat_solution(result_single))
                     back_track_list.append(backtrack_number)
                     print(rule, '| Line:', idx + 1, '| Algorithm:', solver.get_name(), '| The number of backtrack is:',
                           backtrack_number)
@@ -102,52 +104,83 @@ if __name__ == "__main__":
 
                 if idx_rule == 0:
                     solvers_name.append(solver.get_name())
-                if rule == 'sudoku-rules.txt':
+                if rule == rules_files[0]:
                     solvers_averages_backtrack.append(sum(back_track_list) / len(back_track_list))
-                    solvers_averages_times.append(format((time.time() - start_time) / len(back_track_list), '.2f'))
-                    common.writefile(sys.argv[2], result_list, 'sdk')
+                    solvers_averages_times.append(format(sum(times_list) / len(times_list), '.2f'))
+                    solvers_medians_backtrack.append(statistics.median(back_track_list))
+                    solvers_std_backtrack.append(statistics.stdev(back_track_list))
                 else:
                     solvers_averages_backtrack_x_sudoku.append(sum(back_track_list) / len(back_track_list))
-                    solvers_averages_times_x_sudoku.append(format((time.time() - start_time) / len(back_track_list), '.2f'))
-                    common.writefile(sys.argv[2].replace('.txt', 'x.txt'), result_list, 'sdk')
+                    solvers_averages_times_x_sudoku.append(format(sum(times_list) / len(times_list), '.2f'))
+                    solvers_medians_backtrack_x_sudoku.append(statistics.median(back_track_list))
+                    solvers_std_backtrack_x_sudoku.append(statistics.stdev(back_track_list))
+
+        print('-----------------')
+        print(solvers_name)
+        print('avg BK', solvers_averages_backtrack)
+        print('avg time', solvers_averages_times)
+        print('median', solvers_medians_backtrack)
+        print('std', solvers_std_backtrack)
+        print('-----------------')
+        print(solvers_name)
+        print('avg BK', solvers_averages_backtrack_x_sudoku)
+        print('avg time', solvers_averages_times_x_sudoku)
+        print('median', solvers_medians_backtrack_x_sudoku)
+        print('std', solvers_std_backtrack_x_sudoku)
 
         # Draw plot
         n_algorithm = np.arange(len(solvers_name))
         bar_width = 0.35
-        fig, ax = plt.subplots()
-        Normal = ax.bar(n_algorithm - bar_width/2, solvers_averages_backtrack, bar_width, label="Normal")
-        x_sudoku = ax.bar(n_algorithm + bar_width/2, solvers_averages_backtrack_x_sudoku, bar_width, label="X-Sudoku")
-        ax.set_xlabel('Algorithm')
-        ax.set_ylabel('BackTrack')
-        ax.set_title('Average of BackTrack in normal sudoku and x sudoku')
-        ax.set_xticks(n_algorithm)
-        ax.set_xticklabels(solvers_name)
-        ax.legend()
+        fig, ax = plt.subplots(nrows=2, ncols=2)
+        Normal = ax[0, 0].bar(n_algorithm - bar_width / 2, solvers_averages_backtrack, bar_width, label="Normal")
+        x_sudoku = ax[0, 0].bar(n_algorithm + bar_width / 2, solvers_averages_backtrack_x_sudoku, bar_width,
+                                label="X-Sudoku")
+        ax[0, 0].set_ylabel('BackTrack')
+        ax[0, 0].set_title('Average BackTrack')
+        ax[0, 0].set_xticks(n_algorithm)
+        ax[0, 0].set_xticklabels(solvers_name)
+        ax[0, 0].legend()
+
+        Normal = ax[1, 0].bar(n_algorithm - bar_width / 2, solvers_averages_times, bar_width, label="Normal")
+        x_sudoku = ax[1, 0].bar(n_algorithm + bar_width / 2, solvers_averages_times_x_sudoku, bar_width,
+                                label="X-Sudoku")
+        ax[1, 0].set_ylabel('BackTrack')
+        ax[1, 0].set_title('Average time')
+        ax[1, 0].set_xticks(n_algorithm)
+        ax[1, 0].set_xticklabels(solvers_name)
+        ax[1, 0].legend()
+
+        Normal = ax[0, 1].bar(n_algorithm - bar_width / 2, solvers_medians_backtrack, bar_width, label="Normal")
+        x_sudoku = ax[0, 1].bar(n_algorithm + bar_width / 2, solvers_medians_backtrack_x_sudoku, bar_width,
+                                label="X-Sudoku")
+        ax[0, 1].set_ylabel('BackTrack')
+        ax[0, 1].set_title('Median BackTrack')
+        ax[0, 1].set_xticks(n_algorithm)
+        ax[0, 1].set_xticklabels(solvers_name)
+        ax[0, 1].legend()
+
+        Normal = ax[1, 1].bar(n_algorithm - bar_width / 2, solvers_std_backtrack, bar_width, label="Normal")
+        x_sudoku = ax[1, 1].bar(n_algorithm + bar_width / 2, solvers_std_backtrack_x_sudoku, bar_width,
+                                label="X-Sudoku")
+        ax[1, 1].set_ylabel('BackTrack')
+        ax[1, 1].set_title('Standard deviation BackTrack')
+        ax[1, 1].set_xticks(n_algorithm)
+        ax[1, 1].set_xticklabels(solvers_name)
+        ax[1, 1].legend()
+
         plt.show()
 
-        print("---------- Average BackTrack----------------")
-        print(solvers_name)
-        print('Normal', solvers_averages_backtrack)
-        print('X sudoku', solvers_averages_backtrack_x_sudoku)
-
-        print("---------- Average Time------------------")
-        print(solvers_name)
-        print('Normal', solvers_averages_times)
-        print('X sudoku', solvers_averages_times_x_sudoku)
-
-
-
-    # Help
     else:
         print('This is the sat solver for the Knowledge Representation project')
         print('Here are the possibles commands')
         print('-------------------------')
-        print('01: Version + Problem in Dimacs format + Rules in Dimacs format')
-        print('   - The version must be -S + [1,5]')
+        print('01: Version + Rules in Dimacs format + Problem in Dimacs format')
+        print('   - The version must be -Sn where n is between 1 and 5')
         print('-------------------------')
-        print('02: SDK')
-        print('   - The sdk must contains 9x9 sudoku')
+        print('02: Version + Rules in Dimacs format + Problem in SDK format')
+        print('   - The version must be -Sn where n is between 1 and 5')
         print('-------------------------')
-        print('03: -E + SDK')
+        print('03: -E + SDK format for normal rule + SDK format for x-sudoku rules')
         print('   - This mode is used to start the experiment')
-        print('   - ALLERT: the experiment mode could takes a long time, DO NOT USE big sdk format')
+        print('   - Both SDK file must contain 9x9 sudoku because the rules are taken automatically ')
+        print('   - ALERT: the experiment mode could takes a long time, DO NOT USE big sdk format')
