@@ -16,7 +16,7 @@ The solver.py file can be found in the solvers folder. This dir contains all the
 
 ## Execution options
 There are three different options to call the software.
-1. ***SAT.py -S1 sudoku-example.txt sudoku-rules.txt***
+1. ***SAT.py -Sn sudoku-rules.txt sudoku-example.txt***
 	- The **first parameter** must be the (Version), it indicates which heuristic will be used
         - S1 **Standard algorithm**:The standard splitting method used is based on picking in the first clause that we come across in the sudoku rules. If there needs to be a split the first literal in the first clause in the sudoku rule is chosen.
         - S2 **Create unit literals heuristic (CUL)**: The CUL heuristic chose first element of the shortest clause. Choosing the shortest clause in the rules there is a high probability to create unit literals. Create unit literals is ever positive as they can only be true.
@@ -24,11 +24,21 @@ There are three different options to call the software.
         - S4 **Human heuristic (HUM)**: The HUM heuristic is designed to reason like a human. A matrix is created. All empty sudoku positions have a score. The more numbers there are in the same column or in the same row of the empty cell the higher the score will be. The literal chosen from this heuristic will be the one in the matrix with the highest score.
         ![hum heuristic](https://github.com/leobol96/KR_project1/blob/heuristics_implementation/img/hum_heuristic_solver.png)
         - S5 **Positive heuristic (POS)**: The POS is an evolution of the CUL heuristic. Not only it looks for the shortest clause but also for one with positive literal (P).
-	-   The **second parameter** must be the name of the sudoku to solve. The file has to be present in dimacs format in the directory.
-	-   The **third parameter** must be the name of the file with sudoku's rules. The file has to be present in dimacs format in the directory.
-2. ***SAT.py sudoku_file.sdk.txt***-	
-	- The **first parameter** must be the name of the file with all the sudoku in sdk format
-4. ***SAT.py -E sudoku_file.sdk.txt***
-	- This option it's used to launch the experiment    
+	-   The **second parameter** must be the name of the file with sudoku's rules. The file has to be in dimacs format.
+	-   The **third parameter** must be the name of the sudoku to solve. The file has to be in dimacs format.
+2. ***SAT.py -Sn sudoku-rules.txt sudoku_list.SDK.txt***	
+	- The **first parameter** must be the (Version), it indicates which heuristic will be used
+        - S1 **Standard algorithm**:The standard splitting method used is based on picking in the first clause that we come across in the sudoku rules. If there needs to be a split the first literal in the first clause in the sudoku rule is chosen.
+        - S2 **Create unit literals heuristic (CUL)**: The CUL heuristic chose first element of the shortest clause. Choosing the shortest clause in the rules there is a high probability to create unit literals. Create unit literals is ever positive as they can only be true.
+        - S3 **Random heuristic (RND)**: The RND heuristic chooses a random literal in a random clause of the sudoku rules file. This heuristic is unpredictable, sometimes brings good results while other times brings bad results.
+        - S4 **Human heuristic (HUM)**: The HUM heuristic is designed to reason like a human. A matrix is created. All empty sudoku positions have a score. The more numbers there are in the same column or in the same row of the empty cell the higher the score will be. The literal chosen from this heuristic will be the one in the matrix with the highest score.
+        - S5 **Positive heuristic (POS)**: The POS is an evolution of the CUL heuristic. Not only it looks for the shortest clause but also for one with positive literal (P).
+	-   The **second parameter** must be the name of the file with sudoku's rules. The file has to be in dimacs format.
+	-   The **third parameter** must be the name of the file containing the list of sudoku to solve. The file has to be in SDK format.
+4. ***SAT.py -E general_sudoku_list.SDK.txt xversion_sudoku_list.SDK.txt***
+ 	
+    This mode is used to start the experiment, both SDK file must contain 9x9 sudoku because the rules are taken automatically
+        
+    ALERT: the experiment mode could takes a long time, DO NOT USE big sdk format   
 
 ## Others 
