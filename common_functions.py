@@ -190,7 +190,7 @@ def create_csv(name_list, general, x_sudoku):
         x_sudoku: List of lists of result with the x_sudoku_rules
 
     """
-    with open('csv_experiment.csv', 'w') as out:
+    with open('experiment/csv_experiment.csv', 'w') as out:
         title = ''
 
         for n in name_list:
