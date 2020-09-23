@@ -37,7 +37,8 @@ There are three different options to call the software.
 	-   The **third parameter** must be the name of the file containing the list of sudoku to solve. The file has to be in SDK format.
 4. ***SAT.py -E general_sudoku_list.SDK.txt xversion_sudoku_list.SDK.txt***
  	
-    This mode is used to start the experiment, both SDK file must contain 9x9 sudoku because the rules are taken automatically
+    This mode is used to start the experiment, both SDK file must contain 9x9 sudoku because the rules are taken automatically. The experiment mode runs every sdk with its rules. Each sdk will be executed with all the algorithms and a graph will be print at the end of the execution. Moreover, every file sdk.out will be created in the experiment folder.
+    The purpose of the experiment is to check which of the sudoku (normal,x) is more difficult to solve by the solver. 
         
     ALERT: the experiment mode could takes a long time, DO NOT USE big sdk format   
 
