@@ -65,14 +65,21 @@ if __name__ == "__main__":
 
         rules_files = ['sudoku-rules.txt', 'sudoku-rules-x.txt']
         solvers_name = []
+
         solvers_averages_times = []
-        solvers_averages_backtrack = []
-        solvers_medians_backtrack = []
-        solvers_std_backtrack = []
         solvers_averages_times_x_sudoku = []
+
+        solvers_averages_backtrack = []
         solvers_averages_backtrack_x_sudoku = []
+
+        solvers_medians_backtrack = []
         solvers_medians_backtrack_x_sudoku = []
+
+        solvers_std_backtrack = []
         solvers_std_backtrack_x_sudoku = []
+
+        total_list = []
+        total_x_list = []
 
         for idx_rule, rule in enumerate(rules_files):
             # Read the list of sudoku to solve
@@ -109,12 +116,17 @@ if __name__ == "__main__":
                     solvers_averages_times.append(format(sum(times_list) / len(times_list), '.2f'))
                     solvers_medians_backtrack.append(statistics.median(back_track_list))
                     solvers_std_backtrack.append(statistics.stdev(back_track_list))
+                    total_list.append(back_track_list)
                 else:
                     solvers_averages_backtrack_x_sudoku.append(sum(back_track_list) / len(back_track_list))
                     solvers_averages_times_x_sudoku.append(format(sum(times_list) / len(times_list), '.2f'))
                     solvers_medians_backtrack_x_sudoku.append(statistics.median(back_track_list))
                     solvers_std_backtrack_x_sudoku.append(statistics.stdev(back_track_list))
+                    total_x_list.append(back_track_list)
 
+                common.writefile(('experiment/' + rule + '_' + solver.get_name()).replace('.txt', '') + 'out.txt', result_list, 'sdk')
+
+        common.create_csv(solvers_name,total_list, total_x_list)
         print('-----------------')
         print(solvers_name)
         print('avg BK', solvers_averages_backtrack)

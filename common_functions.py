@@ -180,3 +180,33 @@ def filter_sat_solution(sat_solution):
     result.sort()
     return result
 
+
+def create_csv(name_list, general, x_sudoku):
+    """
+    Function to create a csv with the result of the experiment
+    Args:
+        name_list: List of name
+        general: List of lists of results with the general rules
+        x_sudoku: List of lists of result with the x_sudoku_rules
+
+    """
+    with open('csv_experiment.csv', 'w') as out:
+        title = ''
+
+        for n in name_list:
+            title = title + 'general_' + n + ','
+
+        for n in name_list:
+            title = title + 'x_version_' + n + ','
+
+        out.write(title + '\n')
+
+        for k in range(len(general[1])):
+            string = ''
+            for i in range(len(name_list)):
+                string = string + str(general[i][k]) + ','
+
+            for i in range(len(name_list)):
+                string = string + str(x_sudoku[i][k]) + ','
+
+            out.write(string + '\n')
