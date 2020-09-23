@@ -5,6 +5,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import statistics
 
+"""
+Welcome in the main part of the SAT solver.
+This program has been developed for the project of Knowledge Representation Master's degree in Artificial intelligence.
+This python file allows to call in three differences way. If you not yet read the README.md please do it.
+Calling the sat.py without parameters allows you to have a small help, to understand better the operation.
+
+"""
+
 if __name__ == "__main__":
 
     print("Starting ...")
@@ -21,21 +29,32 @@ if __name__ == "__main__":
         solver = common.chose_solver(version)
 
         if 'sdk' not in input_file:
+            """
+            This part of the software deals with the option 1 of the README.md
+            Input : Rules in DIMACS format and problem in DIMACS format.
+            Output : Solution in DIMACS format.
+            """
+
             sudoku_numbers = []
 
             common.read_sudoku(input_file, sudoku_numbers)
-            # Solving the SAT problem
             start_time = time.time()
+            # Solving
             result_single, backtrack_number = solver.solve(sudoku_numbers, sudoku_rules)
+            # Printing and writing results
             print('The number of backtrack is :', backtrack_number)
             end_time = format(time.time() - start_time, '.2f')
             common.writefile(input_file, result_single, 'dimacs')
 
             print("-----------------------------------")
             print("Finish !")
-            print("Total time in Seconds :" + end_time)
 
         else:
+            """
+            This part of the software deals with the option 2 of the README.md
+            Input : Rules in DIMACS format and problem in SDK format.
+            Output : Solution in SDK format.
+            """
 
             result_list = []
             back_track_list = []
@@ -44,6 +63,7 @@ if __name__ == "__main__":
 
             for sudoku in sudoku_list:
                 start_time = time.time()
+                # Solving
                 result_single, backtrack_number = solver.solve(sudoku,
                                                                common.deep_copy_personalized('rules', sudoku_rules))
                 times_list.append(time.time() - start_time)
@@ -58,10 +78,14 @@ if __name__ == "__main__":
 
             print("-----------------------------------")
             print("Finish !")
-            print("Total time in Seconds :" + format(time.time() - start_time, '.2f'))
 
 
     elif len(sys.argv) == 4 and sys.argv[1] == '-E':
+        """
+        This part of the software deals with the option 3 of the README.md
+        Input : Two files in SDK format (general sudoku, x-sudoku)
+        Output : Chart and solutions in SDK format in the experiment dir.
+        """
 
         rules_files = ['sudoku-rules.txt', 'sudoku-rules-x.txt']
         solvers_name = []
@@ -98,6 +122,7 @@ if __name__ == "__main__":
                 back_track_list = []
                 times_list = []
 
+                # For each problem to solve
                 for idx, sudoku in enumerate(sudoku_list):
                     start_time = time.time()
                     result_single, backtrack_number = solver.solve(common.deep_copy_personalized('literal', sudoku),
@@ -124,9 +149,12 @@ if __name__ == "__main__":
                     solvers_std_backtrack_x_sudoku.append(statistics.stdev(back_track_list))
                     total_x_list.append(back_track_list)
 
-                common.writefile(('experiment/' + rule + '_' + solver.get_name()).replace('.txt', '') + 'out.txt', result_list, 'sdk')
+                common.writefile(('experiment/' + rule + '_' + solver.get_name()).replace('.txt', '') + 'out.txt',
+                                 result_list, 'sdk')
 
-        common.create_csv(solvers_name,total_list, total_x_list)
+        # Create a csv with the numbers of backtrack for each solver
+        common.create_csv(solvers_name, total_list, total_x_list)
+
         print('-----------------')
         print(solvers_name)
         print('avg BK', solvers_averages_backtrack)
@@ -140,7 +168,7 @@ if __name__ == "__main__":
         print('median', solvers_medians_backtrack_x_sudoku)
         print('std', solvers_std_backtrack_x_sudoku)
 
-        # Draw plot
+        # Draw plot to check the hypothesis of the experiment
         n_algorithm = np.arange(len(solvers_name))
         bar_width = 0.35
         fig, ax = plt.subplots(nrows=2, ncols=2)
@@ -184,6 +212,9 @@ if __name__ == "__main__":
 
     else:
         print('This is the sat solver for the Knowledge Representation project')
+        print(
+            'If you are watching this, it means that either you called the program without parameter or you used '
+            'wrong parameters')
         print('Here are the possibles commands')
         print('-------------------------')
         print('01: Version + Rules in Dimacs format + Problem in Dimacs format')
