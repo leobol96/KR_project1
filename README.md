@@ -40,6 +40,8 @@ There are three different options to call the software.
     This mode will run each file with its rules for each heruristic implemented.
     At the end of the experiment will be created the solutions of the SDK in the Experiment folder (The experiment folder must be already present) and a graph like the one below  will be printed.
     
+    ![graph](https://github.com/leobol96/KR_project1/blob/master/img/experiment_chart.jpeg)
+    
     ALERT: the experiment mode could takes a long time, DO NOT USE big sdk format   
 
 ## Others 
