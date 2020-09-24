@@ -215,6 +215,7 @@ if __name__ == "__main__":
         print(
             'If you are watching this, it means that either you called the program without parameter or you used '
             'wrong parameters')
+        print('To have a complete overview of the project read the README file or check https://github.com/leobol96/KR_project1/blob/master/img/project_structure.jpg')
         print('Here are the possibles commands')
         print('-------------------------')
         print('01: Version + Rules in Dimacs format + Problem in Dimacs format')
