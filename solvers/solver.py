@@ -109,7 +109,7 @@ class Solver:
 
     def dpll_2(self, sudoku_rules, literal, sudoku_numbers):
         """
-        The function is the core part of the algorithm Davis-Putman.
+        The function is the core part of the algorithm Davis-Putnam.
         With the recursion paradigm it solves the SAT problem.
 
         Args:
