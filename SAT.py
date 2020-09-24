@@ -184,7 +184,7 @@ if __name__ == "__main__":
         Normal = ax[1, 0].bar(n_algorithm - bar_width / 2, solvers_averages_times, bar_width, label="Normal")
         x_sudoku = ax[1, 0].bar(n_algorithm + bar_width / 2, solvers_averages_times_x_sudoku, bar_width,
                                 label="X-Sudoku")
-        ax[1, 0].set_ylabel('BackTrack')
+        ax[1, 0].set_ylabel('Seconds')
         ax[1, 0].set_title('Average time')
         ax[1, 0].set_xticks(n_algorithm)
         ax[1, 0].set_xticklabels(solvers_name)
