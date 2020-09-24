@@ -227,16 +227,20 @@ if __name__ == "__main__":
         print(
             'If you are watching this, it means that either you called the program without parameter or you used '
             'wrong parameters')
-        print('To have a complete overview of the project read the README file or check https://github.com/leobol96/KR_project1/blob/master/img/project_structure.jpg')
+        print('To have a complete overview of the project read the README file or check '
+              'https://github.com/leobol96/KR_project1/blob/master/img/project_structure.jpg')
         print('Here are the possibles commands')
         print('-------------------------')
         print('01: Version + Rules in Dimacs format + Problem in Dimacs format')
         print('   - The version must be -Sn where n is between 1 and 5')
         print('-------------------------')
-        print('02: Version + Rules in Dimacs format + Problem in SDK format')
+        print('02: Version + Rules and sudoku to solve merged into a single file in DIMACS format')
         print('   - The version must be -Sn where n is between 1 and 5')
         print('-------------------------')
-        print('03: -E + SDK format for normal rule + SDK format for x-sudoku rules')
+        print('03: Version + Rules in Dimacs format + Problem in SDK format')
+        print('   - The version must be -Sn where n is between 1 and 5')
+        print('-------------------------')
+        print('04: -E + SDK format for normal rule + SDK format for x-sudoku rules')
         print('   - This mode is used to start the experiment')
         print('   - Both SDK file must contain 9x9 sudoku because the rules are taken automatically ')
         print('   - ALERT: the experiment mode could takes a long time, DO NOT USE big sdk format')
