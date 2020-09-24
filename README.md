@@ -5,7 +5,7 @@ Please read carefully this README file before use the program.
 If you don't have a markdown editor or if you don't see the images, please visit: https://github.com/leobol96/KR_project1 
 
 ## Structure
-The main program is the **SAT.py**. The latter contains the main program and the different logic to execute the software in three possible ways(See the execution options paragraph)
+The main program is the **SAT.py**. The latter contains the different logic to execute the software in three possible ways(See the execution options paragraph)
 
 The **common_functions.py** contains all the functions that are used for general scopes (read, write, etc). This file is imported and used not only from the SAT.py but also from the solver.py
 
