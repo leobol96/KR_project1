@@ -4,6 +4,36 @@ from solvers import cul_heuristic_solver as he2, rnd_heuristic_solver as he3, so
     pos_heuristic_solver as he5
 
 
+def read_rules_literals(filename):
+    """
+    This method allows to read the rules and the sudoku from the same file.
+    The sudoku must be in DIMACS format
+
+    Args:
+        filename: file to read
+
+    Returns:
+        Rules and sudoku
+
+    """
+    rules = []
+    numbers = []
+
+    with open(filename, 'r') as input_file:
+        for line in input_file:
+            if line[0] == 'p':
+                pass
+            else:
+                line = line.split()
+                line.pop()
+                if len(line) == 1:
+                    numbers.append(line[0])
+                else:
+                    rules.append(line)
+
+    return rules, numbers
+
+
 def read_sudoku(filename, sudoku_numbers):
     """
     The function reads the problem given in DIMACS format

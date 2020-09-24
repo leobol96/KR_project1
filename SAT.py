@@ -17,15 +17,20 @@ if __name__ == "__main__":
 
     print("Starting ...")
     solvers = ['-S1', '-S2', '-S3', '-S4', '-S5']
+    len_parameters = [3, 4]
 
-    if len(sys.argv) == 4 and sys.argv[1] in solvers:
+    if len(sys.argv) in len_parameters and sys.argv[1] in solvers:
 
-        version = sys.argv[1]
-        rule_file = sys.argv[2]
-        input_file = sys.argv[3]
+        if len(sys.argv) == 4:
+            version = sys.argv[1]
+            rule_file = sys.argv[2]
+            input_file = sys.argv[3]
+        else:
+            # This permit to call the software with the rules and the sudoku to solve merged in a file.
+            version = sys.argv[1]
+            input_file = sys.argv[2]
+
         result_single = []
-
-        sudoku_rules = common.read_rules(rule_file)
         solver = common.chose_solver(version)
 
         if 'sdk' not in input_file:
@@ -37,7 +42,13 @@ if __name__ == "__main__":
 
             sudoku_numbers = []
 
-            common.read_sudoku(input_file, sudoku_numbers)
+            if len(sys.argv) == 4:
+                sudoku_rules = common.read_rules(rule_file)
+                common.read_sudoku(input_file, sudoku_numbers)
+            else:
+                # This permit to call the software with the rules and the sudoku to solve merged in a file.
+                sudoku_rules, sudoku_numbers = common.read_rules_literals(input_file)
+
             start_time = time.time()
             # Solving
             result_single, backtrack_number = solver.solve(sudoku_numbers, sudoku_rules)
@@ -60,6 +71,7 @@ if __name__ == "__main__":
             back_track_list = []
             times_list = []
             sudoku_list = common.read_sdk(input_file)
+            sudoku_rules = common.read_rules(rule_file)
 
             for sudoku in sudoku_list:
                 start_time = time.time()
