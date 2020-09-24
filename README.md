@@ -28,7 +28,10 @@ There are three different options to call the software.
         - S5 **Positive heuristic (CULPOS)**: The CULPOS is an evolution of the CUL heuristic. Not only it looks for the shortest clause but also for one with positive literal (P).
 	-   The **second parameter** must be the name of the file with sudoku's rules. The file has to be in DIMACS format.
 	-   The **third parameter** must be the name of the sudoku to solve. The file has to be in DIMACS format.
-2. ***SAT.py -Sn sudoku-rules.txt sudoku_list.SDK.txt***	
+2. ***SAT.py -Sn sudoku_rules_input_merged.txt***
+	- The **first parameter** must be the (Version). The possible versions are mentioned above.
+	- The **second parameter** must be the name of the file that contains the rules and the sudoku to solve merged into a single file. This file must be in DIMACS format. 
+3. ***SAT.py -Sn sudoku-rules.txt sudoku_list.SDK.txt***	
 	- The **first parameter** must be the (Version). The possible versions are mentioned above.
 	-   The **second parameter** must be the name of the file with sudoku's rules. The file has to be in DIMACS format.
 	-   The **third parameter** must be the name of the file containing the list of sudoku to solve. The file has to be in SDK format.
