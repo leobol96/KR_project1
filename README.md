@@ -41,6 +41,10 @@ There are three different options to call the software.
     - The **second parameter** must be a collection of 9x9 sudoku valid for the general rules (the number of the sudoku must be the same of the collection used as the third parameter ).
     - The **third parameter** must be a collection of 9x9 sudoku valid for the x-sudoku rules (the number of the sudoku must be the same of the collection used as the second parameter).
     
+    If you want to try this version run this:
+    
+    **python .\SAT.py -E .\test\online_15_23numbers.sdk.txt .\test\online_15_x_23number.sdk.txt**
+    
     This mode will run each file with its rules for each heuristic implemented.
     At the end of the experiment will be created the solutions of the SDK in the Experiment folder (The experiment folder must be already present).
     Launching the experiment with the python command the following graph will be printe. In case the experiment is launched from the executable the informations will be printed only on the terminal. 
