@@ -2,7 +2,7 @@
 
 The project is built for solving the sudoku problem using a sat solver.
 Please read carefully this README file before use the program.
-If you don't have a markdown editor or if you don't see the images, please visit: https://github.com/leobol96/KR_project1 
+If you don't have a markdown editor or if you don't see the images, please visit: https://github.com/leobol96/Sudoku_SAT_Solver 
 
 ## Structure
 The main program is the **SAT.py**. The latter contains the different logic to execute the software in three possible ways(See the execution options paragraph)
